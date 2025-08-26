@@ -2,7 +2,6 @@ package udpnat
 
 import (
 	"context"
-	"math"
 	"net/netip"
 	"time"
 
@@ -28,9 +27,9 @@ func New(handler N.UDPConnectionHandlerEx, prepare PrepareFunc, timeout time.Dur
 	}
 	var cache freelru.Cache[netip.AddrPort, *natConn]
 	if !shared {
-		cache = common.Must1(freelru.NewSynced[netip.AddrPort, *natConn](math.MaxUint16, maphash.NewHasher[netip.AddrPort]().Hash32))
+		cache = common.Must1(freelru.NewSynced[netip.AddrPort, *natConn](1024, maphash.NewHasher[netip.AddrPort]().Hash32))
 	} else {
-		cache = common.Must1(freelru.NewSharded[netip.AddrPort, *natConn](math.MaxUint16, maphash.NewHasher[netip.AddrPort]().Hash32))
+		cache = common.Must1(freelru.NewSharded[netip.AddrPort, *natConn](1024, maphash.NewHasher[netip.AddrPort]().Hash32))
 	}
 	cache.SetLifetime(timeout)
 	cache.SetHealthCheck(func(port netip.AddrPort, conn *natConn) bool {

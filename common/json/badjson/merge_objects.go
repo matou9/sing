@@ -90,6 +90,9 @@ func UnmarshallExcludedContextMulti(ctx context.Context, inputContent []byte, pa
 }
 
 func newJSONObject(ctx context.Context, object any) (*JSONObject, error) {
+	if object == nil {
+		return &JSONObject{}, nil
+	}
 	inputContent, err := json.MarshalContext(ctx, object)
 	if err != nil {
 		return nil, err
